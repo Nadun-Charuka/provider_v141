@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider_v141/data/product_data.dart';
 import 'package:provider_v141/models/product_model.dart';
+import 'package:provider_v141/pages/cart_page.dart';
+import 'package:provider_v141/pages/favorite_page.dart';
 
 class ProductPage extends StatelessWidget {
   const ProductPage({super.key});
@@ -14,9 +16,50 @@ class ProductPage extends StatelessWidget {
           'Flutter Shop ',
           style: TextStyle(
             color: Colors.deepOrange,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
           ),
         ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: "Favorite Button",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FavoritePage(),
+                ),
+              );
+            },
+            backgroundColor: Colors.deepOrange,
+            child: Icon(
+              Icons.favorite,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          FloatingActionButton(
+            heroTag: "Shoppin Buutton",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CartPage(),
+                ),
+              );
+            },
+            backgroundColor: Colors.deepOrange,
+            child: Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: productList.length,
