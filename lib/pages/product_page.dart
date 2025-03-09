@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:provider_v141/data/product_data.dart';
 import 'package:provider_v141/models/product_model.dart';
 import 'package:provider_v141/pages/cart_page.dart';
 import 'package:provider_v141/pages/favorite_page.dart';
+import 'package:provider_v141/providers/cart_provider.dart';
 
 class ProductPage extends StatelessWidget {
   const ProductPage({super.key});
@@ -66,41 +68,64 @@ class ProductPage extends StatelessWidget {
         itemBuilder: (context, index) {
           Product product = productList[index];
           return Card(
-            child: ListTile(
-              title: Row(
-                children: [
-                  Text(
-                    product.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+            child: Consumer<CartProvider>(
+              builder: (context, cartPorvider, child) => ListTile(
+                title: Row(
+                  children: [
+                    Text(
+                      product.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
-                  //todo fill this
-                  Text("0"),
-                ],
-              ),
-              subtitle: Text(
-                "\$ ${product.price.toString()}",
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.favorite,
+                    SizedBox(
+                      width: 50,
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.shopping_cart,
+                    Text(
+                      cartPorvider.items.containsKey(product.id)
+                          ? cartPorvider.items[product.id]!.quantity.toString()
+                          : "0",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                subtitle: Text(
+                  "\$ ${product.price.toString()}",
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.favorite,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        cartPorvider.addItem(
+                          product.id,
+                          product.price,
+                          product.title,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Added to cart"),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.shopping_cart,
+                        color: cartPorvider.items.containsKey(product.id)
+                            ? Colors.red
+                            : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
