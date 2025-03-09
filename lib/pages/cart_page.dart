@@ -65,7 +65,7 @@ class CartPage extends StatelessWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                      " ${cartProvider.items.values.toList()[index].title} removed from cart"),
+                                      " ${cartItem.title} removed from cart"),
                                   duration: Duration(seconds: 3),
                                 ),
                               );

@@ -5,6 +5,7 @@ import 'package:provider_v141/models/product_model.dart';
 import 'package:provider_v141/pages/cart_page.dart';
 import 'package:provider_v141/pages/favorite_page.dart';
 import 'package:provider_v141/providers/cart_provider.dart';
+import 'package:provider_v141/providers/favorite_provider.dart';
 
 class ProductPage extends StatelessWidget {
   const ProductPage({super.key});
@@ -68,8 +69,9 @@ class ProductPage extends StatelessWidget {
         itemBuilder: (context, index) {
           Product product = productList[index];
           return Card(
-            child: Consumer<CartProvider>(
-              builder: (context, cartPorvider, child) => ListTile(
+            child: Consumer2<CartProvider, FavoriteProvider>(
+              builder: (context, cartPorvider, favoriteProvider, child) =>
+                  ListTile(
                 title: Row(
                   children: [
                     Text(
@@ -98,9 +100,25 @@ class ProductPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (favoriteProvider.isFavorite(product.id)) {
+                          favoriteProvider.removedFavProduct(product.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Removed from Favorite")));
+                        } else {
+                          favoriteProvider.addFavProducts(
+                              product.id, product.title, product.price);
+                          favoriteProvider.toggleFavorite(product.id);
+                        }
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Added to Favorite")));
+                      },
                       icon: Icon(
                         Icons.favorite,
+                        color: favoriteProvider.isFavorite(product.id)
+                            ? Colors.redAccent
+                            : Colors.grey,
                       ),
                     ),
                     IconButton(
@@ -120,7 +138,7 @@ class ProductPage extends StatelessWidget {
                       icon: Icon(
                         Icons.shopping_cart,
                         color: cartPorvider.items.containsKey(product.id)
-                            ? Colors.red
+                            ? Colors.orangeAccent
                             : Colors.black,
                       ),
                     ),

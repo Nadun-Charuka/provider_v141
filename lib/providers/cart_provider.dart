@@ -12,12 +12,12 @@ class CartProvider extends ChangeNotifier {
   }
 
   //add item
-  void addItem(String productId, double price, String title) {
-    if (_items.containsKey(productId)) {
+  void addItem(String id, double price, String title) {
+    if (_items.containsKey(id)) {
       //_items.update(key, update)
       _items.update(
         //productId become the key
-        productId,
+        id,
         // (existingCartItem) {
         //   return CartItem(
         //     id: existingCartItem.id,
@@ -40,9 +40,9 @@ class CartProvider extends ChangeNotifier {
       debugPrint("Added existing data");
     } else {
       _items.putIfAbsent(
-        productId,
+        id,
         () => CartItem(
-          id: productId,
+          id: id,
           title: title,
           price: price,
           quantity: 1,
