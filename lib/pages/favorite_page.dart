@@ -19,35 +19,36 @@ class FavoritePage extends StatelessWidget {
         ),
       ),
       body: Consumer<FavoriteProvider>(
-        builder: (context, favoriteProvider, child) => ListView.builder(
-          itemCount: favoriteProvider.favProduct.length,
-          itemBuilder: (context, index) => Card(
-            child: ListTile(
-              title: Text(
-                favoriteProvider.favProduct.values
-                    .toList()[index]
-                    .title
-                    .toString(),
-              ),
-              subtitle: Text(
-                favoriteProvider.favProduct.values
-                    .toList()[index]
-                    .price
-                    .toString(),
-              ),
-              trailing: IconButton(
-                onPressed: () {
-                  favoriteProvider.removedFavProduct(
-                      favoriteProvider.favProduct.values.toList()[index].id);
-                },
-                icon: Icon(
-                  Icons.remove_circle_outline,
-                  size: 30,
+        builder: (context, favoriteProvider, child) {
+          final favProduct = favoriteProvider.favProduct.values.toList();
+          if (favoriteProvider.favProduct.isEmpty) {
+            return Center(
+                child: Text(
+              "No Favorites",
+              style: TextStyle(fontSize: 30),
+            ));
+          }
+          return ListView.builder(
+            itemCount: favoriteProvider.favProduct.length,
+            itemBuilder: (context, index) => Card(
+              child: ListTile(
+                title: Text(favProduct[index].title),
+                subtitle: Text(
+                  favProduct[index].price.toString(),
+                ),
+                trailing: IconButton(
+                  onPressed: () {
+                    favoriteProvider.removeFavProduct(favProduct[index].id);
+                  },
+                  icon: Icon(
+                    Icons.remove_circle_outline,
+                    size: 30,
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

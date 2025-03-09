@@ -39,7 +39,7 @@ class FavoriteProvider extends ChangeNotifier {
   }
 
 //remove from fav page
-  void removedFavProduct(String id) {
+  void removeFavProduct(String id) {
     _favProduct.remove(id);
     _favorites.remove(id);
     notifyListeners();

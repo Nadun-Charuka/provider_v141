@@ -20,69 +20,80 @@ class CartPage extends StatelessWidget {
         ),
       ),
       body: Consumer<CartProvider>(
-        builder: (context, cartProvider, child) => Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: cartProvider.items.length,
-                itemBuilder: (context, index) {
-                  CartItem cartItem = cartProvider.items.values.toList()[index];
-                  return Card(
-                    color: Color.fromARGB(255, 244, 239, 239),
-                    child: ListTile(
-                      title: Text(cartItem.title),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(cartItem.id),
-                          Text(cartItem.quantity.toString()),
-                        ],
+        builder: (context, cartProvider, child) {
+          if (cartProvider.items.isEmpty) {
+            return Center(
+                child: Text(
+              "No Items in cart",
+              style: TextStyle(fontSize: 30),
+            ));
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: cartProvider.items.length,
+                  itemBuilder: (context, index) {
+                    CartItem cartItem =
+                        cartProvider.items.values.toList()[index];
+                    return Card(
+                      color: Color.fromARGB(255, 244, 239, 239),
+                      child: ListTile(
+                        title: Text(cartItem.title),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(cartItem.id),
+                            Text(cartItem.quantity.toString()),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                cartProvider.incrementItemCount(index);
+                              },
+                              icon: Icon(
+                                Icons.add,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                cartItem.quantity >= 2
+                                    ? cartProvider.decrementItemCount(index)
+                                    : cartProvider.removeFromCart(cartItem.id);
+                              },
+                              icon: Icon(
+                                Icons.remove,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                cartProvider.removeFromCart(cartItem.id);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        " ${cartItem.title} removed from cart"),
+                                    duration: Duration(seconds: 3),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.remove_shopping_cart,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              cartProvider.incrementItemCount(index);
-                            },
-                            icon: Icon(
-                              Icons.add,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              cartItem.quantity >= 2
-                                  ? cartProvider.decrementItemCount(index)
-                                  : cartProvider.removeFromCart(cartItem.id);
-                            },
-                            icon: Icon(
-                              Icons.remove,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              cartProvider.removeFromCart(cartItem.id);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      " ${cartItem.title} removed from cart"),
-                                  duration: Duration(seconds: 3),
-                                ),
-                              );
-                            },
-                            icon: Icon(
-                              Icons.remove_shopping_cart,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+                    );
+                  },
+                ),
+              )
+            ],
+          );
+        },
       ),
     );
   }

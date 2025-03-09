@@ -102,7 +102,7 @@ class ProductPage extends StatelessWidget {
                     IconButton(
                       onPressed: () {
                         if (favoriteProvider.isFavorite(product.id)) {
-                          favoriteProvider.removedFavProduct(product.id);
+                          favoriteProvider.removeFavProduct(product.id);
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Removed from Favorite")));
                         } else {
