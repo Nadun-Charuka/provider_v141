@@ -2,46 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:provider_v141/models/product_model.dart';
 
 class FavoriteProvider extends ChangeNotifier {
-  final Map<String, bool> _favorites = {};
-  Map<String, bool> get favorites => _favorites;
+  final Map<String, Product> _favProductMap = {};
 
-  void toggleFavorite(String id) {
-    if (_favorites.containsKey(id)) {
-      _favorites[id] = !_favorites[id]!;
-      debugPrint("$_favorites");
+// Map.unmodifiable(_favProductMap); -  Prevents direct modification of _favProductMap from outside the provider.Ensures that changes can only happen inside the FavoriteProvider class.
+  Map<String, Product> get favProduct => Map.unmodifiable(_favProductMap);
+
+  void toggleFavorite(String id, String title, double price) {
+    if (_favProductMap.containsKey(id)) {
+      // If the product is already in favorites, just remove it
+      _favProductMap.remove(id);
     } else {
-      _favorites[id] = true;
-      debugPrint("$_favorites");
+      // If the product is not in favorites, add it
+      _favProductMap[id] =
+          Product(id: id, title: title, price: price, isFavortie: true);
     }
     notifyListeners();
   }
 
-  //check fav or not
+//can use to check wether its click or unclicked
   bool isFavorite(String id) {
-    //it may return null, which is not ideal when working with booleans.By using ?? false, you ensure that the method always returns a boolean (true or false), preventing null-related errors.
-    return _favorites[id] ?? false;
+    return _favProductMap[id]?.isFavortie ?? false;
   }
 
-  final Map<String, Product> _favProduct = {};
-  Map<String, Product> get favProduct => _favProduct;
-
-//add to fav page
-  void addFavProducts(String id, String title, double price) {
-    if (_favProduct.containsKey(id)) {
-      return;
-    } else {
-      _favProduct.putIfAbsent(
-        id,
-        () => Product(id: id, title: title, price: price),
-      );
-    }
-    notifyListeners();
-  }
-
-//remove from fav page
   void removeFavProduct(String id) {
-    _favProduct.remove(id);
-    _favorites.remove(id);
+    _favProductMap.remove(id);
     notifyListeners();
   }
 }
