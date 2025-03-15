@@ -84,8 +84,10 @@ class ProductPage extends StatelessWidget {
                       width: 50,
                     ),
                     Text(
-                      cartPorvider.items.containsKey(product.id)
-                          ? cartPorvider.items[product.id]!.quantity.toString()
+                      cartPorvider.cartItemsMap.containsKey(product.id)
+                          ? cartPorvider
+                              .cartItemsMap[product.id]!.cartAddedQuantity
+                              .toString()
                           : "0",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -127,7 +129,7 @@ class ProductPage extends StatelessWidget {
                       },
                       icon: Icon(
                         Icons.shopping_cart,
-                        color: cartPorvider.items.containsKey(product.id)
+                        color: cartPorvider.cartItemsMap.containsKey(product.id)
                             ? Colors.orangeAccent
                             : Colors.black,
                       ),

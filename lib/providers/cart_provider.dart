@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider_v141/models/cart_model.dart';
+import 'package:provider_v141/models/product_model.dart';
 
 class CartProvider extends ChangeNotifier {
   //cart item state
-  final Map<String, CartItem> _items = {};
+  final Map<String, Product> _cartItemsMap = {};
 
   //getter
-  Map<String, CartItem> get items {
+  Map<String, Product> get cartItemsMap {
     // ... spread operator
-    return {..._items};
+    return {..._cartItemsMap};
   }
 
   //add item
   void addItem(String id, double price, String title) {
-    if (_items.containsKey(id)) {
+    if (_cartItemsMap.containsKey(id)) {
       //_items.update(key, update)
-      _items.update(
+      _cartItemsMap.update(
         //productId become the key
         id,
         // (existingCartItem) {
@@ -30,22 +30,22 @@ class CartProvider extends ChangeNotifier {
 
         //existingCartItem is just the name of the parameter that holds the current data (like a snapshot or copy) of the item.
         //existingCartItem refers to the current CartItem object associated with the productId.
-        (exsistingCartItem) => CartItem(
+        (exsistingCartItem) => Product(
           id: exsistingCartItem.id,
           title: exsistingCartItem.title,
           price: exsistingCartItem.price,
-          quantity: exsistingCartItem.quantity + 1,
+          cartAddedQuantity: exsistingCartItem.cartAddedQuantity + 1,
         ),
       );
       debugPrint("Added existing data");
     } else {
-      _items.putIfAbsent(
+      _cartItemsMap.putIfAbsent(
         id,
-        () => CartItem(
+        () => Product(
           id: id,
           title: title,
           price: price,
-          quantity: 1,
+          cartAddedQuantity: 1,
         ),
       );
       debugPrint("Added new data");
@@ -54,17 +54,44 @@ class CartProvider extends ChangeNotifier {
   }
 
   void decrementItemCount(int index) {
-    _items.values.toList()[index].quantity--;
+    _cartItemsMap.values.toList()[index].cartAddedQuantity--;
     notifyListeners();
   }
 
   void incrementItemCount(int index) {
-    _items.values.toList()[index].quantity++;
+    _cartItemsMap.values.toList()[index].cartAddedQuantity++;
     notifyListeners();
   }
 
   void removeFromCart(String productId) {
-    _items.remove(productId);
+    _cartItemsMap.remove(productId);
+    notifyListeners();
+  }
+
+  // double totalCartPrice() {
+  //   //collection.fold(initialValue, (accumulator, element) => updatedValue);
+  //   /*
+  //   collection → List or Map you want to process.
+  //   initialValue → Starting value for accumulation.
+  //   accumulator → Keeps track of the result as the loop progresses.
+  //   element → Each item from the collection.
+  //   updatedValue → New value to store in accumulator.
+  //   */
+  //   return double.parse(_cartItemsMap.values
+  //       .fold(0.0, (sum, item) => sum + (item.price * item.cartAddedQuantity))
+  //       .toStringAsFixed(2));
+  // }
+
+  double totalPrice() {
+    var total = 0.0;
+    cartItemsMap.values.toList().forEach((product) {
+      total = total + product.price * product.cartAddedQuantity;
+    });
+    return total;
+  }
+
+  void clearCart() {
+    _cartItemsMap.clear();
     notifyListeners();
   }
 }

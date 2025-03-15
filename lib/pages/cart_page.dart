@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:provider_v141/models/cart_model.dart';
+import 'package:provider_v141/models/product_model.dart';
+
 import 'package:provider_v141/providers/cart_provider.dart';
 
 class CartPage extends StatelessWidget {
@@ -21,7 +22,7 @@ class CartPage extends StatelessWidget {
       ),
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
-          if (cartProvider.items.isEmpty) {
+          if (cartProvider.cartItemsMap.isEmpty) {
             return Center(
                 child: Text(
               "No Items in cart",
@@ -31,12 +32,46 @@ class CartPage extends StatelessWidget {
 
           return Column(
             children: [
+              Container(
+                margin: EdgeInsets.all(10),
+                height: 100,
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: "Total:",
+                        style: TextStyle(
+                            fontSize: 25), // Default style for all text
+                        children: [
+                          TextSpan(
+                            text: " ${cartProvider.totalPrice()}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: " \$",
+                            style: TextStyle(fontSize: 15),
+                          )
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          cartProvider.clearCart();
+                        },
+                        child: Text("Clear Cart"))
+                  ],
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: cartProvider.items.length,
+                  itemCount: cartProvider.cartItemsMap.length,
                   itemBuilder: (context, index) {
-                    CartItem cartItem =
-                        cartProvider.items.values.toList()[index];
+                    Product cartItem =
+                        cartProvider.cartItemsMap.values.toList()[index];
                     return Card(
                       color: Color.fromARGB(255, 244, 239, 239),
                       child: ListTile(
@@ -45,7 +80,7 @@ class CartPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(cartItem.id),
-                            Text(cartItem.quantity.toString()),
+                            Text(cartItem.cartAddedQuantity.toString()),
                           ],
                         ),
                         trailing: Row(
@@ -61,7 +96,7 @@ class CartPage extends StatelessWidget {
                             ),
                             IconButton(
                               onPressed: () {
-                                cartItem.quantity >= 2
+                                cartItem.cartAddedQuantity >= 2
                                     ? cartProvider.decrementItemCount(index)
                                     : cartProvider.removeFromCart(cartItem.id);
                               },
